@@ -14,3 +14,11 @@ for(i = 0; i < word.length; i++) {
 }
 
 document.getElementById('underlines').innerHTML += html;
+document.addEventListener('keydown', processGuess);
+
+function processGuess(event) {
+	
+	var guess = String.fromCharCode(event.keyCode);
+	alert(guess);
+}
+
