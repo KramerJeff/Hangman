@@ -1,9 +1,0 @@
-#answerdiv * {
-	display: inline;
-}
-
-#answerdiv p {
-	visibility: hidden;
-	padding-left: 1em;
-	padding-right: 1em;
-}
