@@ -1,19 +1,12 @@
-var word = "delicious";
+/**
+ * Hangman application created to learn more about JavaScript
+ * @author Jeff Kramer
+ */
 var wrongGuesses = 6;
-var i = 0;
-
-var xStart = 0;
-var x2Start = 35;
-var yStart = 0;
-//var wordList;
-//readTextFile("file:///home/jeff/projects/hangman/words.txt");
-var wordList = readTextFile("file:///home/jeff/projects/hangman/words.txt");
+var wordList = readTextFile("file:///C:/Users/Jeff/projects/Hangman/words.txt");
 var randomIndex = Math.floor(Math.random() * (wordList.length-1 - 0 + 1)) + 0;
-word = wordList[randomIndex];
-alert(word);
-//word = wordList[randomIndex];
+var word = wordList[randomIndex].trim();
 //alert(word);
-
 //Create initial hangman structure
 createHangman();
 
@@ -24,68 +17,6 @@ createHiddenLetters();
 createUnderlines();
 
 document.addEventListener('keydown', processGuess);
-
-function createUnderlines() {
-	var html = '';
-	for(i = 0; i < word.length; i++) {
-		html += "<svg height='10' width='35'><line x1='" + xStart + "' y1='" + yStart + "' x2='" + x2Start + "' y2='" + yStart + "' style='stroke:rgb(0,0,0);stroke-width:2'/></svg>";
-		html += "<svg height='10' width='5'><line x1=0 y1=0 x2=5 y2=0 style='stroke:rgb(255,255,255);stroke-width:2'/></svg>"; //draw a small white line
-	}
-
-	document.getElementById('underlines').innerHTML += html;
-}
-
-function processGuess(event) {
-	
-	var guess = String.fromCharCode(event.keyCode).toLowerCase();
-	var indexOfGuess = word.indexOf(guess);
-	if(indexOfGuess === -1) {
-		wrongGuesses--;
-		if(wrongGuesses === 1 ) {
-			alert("you got it wrong! you have " + wrongGuesses + " guess left.");
-		}
-		else {
-			alert("you got it wrong! you have " + wrongGuesses + " guesses left.");
-		}
-		
-	}
-	else {
-		//var answer = document.getElementById('answer');
-		while(indexOfGuess !== -1) {
-			if(indexOfGuess === 0) {
-				//display letter at correct position
-				//answer.innerHTML = word.charAt(0) + answer.innerHTML;
-				word = word.substr(1, word.length);
-				
-				alert(word);
-			}
-			else {
-				//alert(word.substr(0, indexOfGuess) + word.substr(indexOfGuess+1, word.length));
-				//display letter at correct position
-				word = word.substr(0, indexOfGuess) + word.substr(indexOfGuess+1, word.length);
-				
-
-				alert(word);
-			}
-			indexOfGuess = word.indexOf(guess);
-		}
-	}
-	
-	if(wrongGuesses === 0) {
-		alert("You lose!");
-		//death animation
-		//prompt to try again
-	}
-	if(word.length === 0) { //this is our win condition
-		alert("You win!");
-		//victory animation
-		//prompt to play again
-	}
-}
-
-function drawLetter(character, index) {
-
-}
 
 function readTextFile(file) {
 	var xmlhttp;
@@ -98,10 +29,8 @@ function readTextFile(file) {
 	}
 	
 	xmlhttp.onload = function() {
-		//wordList = xmlhttp.responseText.split("\n");
 		theList = xmlhttp.responseText.split("\n");
-		theList.pop();
-		//alert(allText);
+		theList.pop(); //get rid of whitespace
 	}
 
 	xmlhttp.open("GET", file, false);
@@ -109,23 +38,95 @@ function readTextFile(file) {
 	return theList;
 }
 
-
 function createHangman() {
 	var html = '';
-	html = "<svg height='80' width='60'>";
-	html += "<line x1='0' y1='80' x2='80' y2='80' style='stroke:rgb(0,0,0);stroke-width:4'/>"; //horizontal bottom line
-	html += "<line x1='30' y1='2' x2='30' y2='80' style='stroke:rgb(0,0,0);stroke-width:2'/>"; //vertical line
-	html += "<line x1='30' y1='2' x2='80' y2='2' style='stroke:rgb(0,0,0);stroke-width:2'/>"; //horizontal top line
-	html += "<line x1='59' y1='2' x2='59' y2='15' style='stroke:rgb(0,0,0);stroke-width:2'/>"; //vertical line
+	html = "<svg id='hangman' height='160' width='200'>";
+	html += "<line x1='0' y1='159' x2='200' y2='159' style='stroke:rgb(0,0,0);stroke-width:3'/>"; //horizontal bottom line
+	html += "<line x1='50' y1='2' x2='50' y2='160' style='stroke:rgb(0,0,0);stroke-width:3'/>"; //vertical line
+	html += "<line x1='48' y1='2' x2='120' y2='2' style='stroke:rgb(0,0,0);stroke-width:3'/>"; //horizontal top line
+	html += "<line x1='119' y1='2' x2='119' y2='30' style='stroke:rgb(0,0,0);stroke-width:3'/>"; //vertical line
 	html += "</svg>";
-	document.getElementById('hangman').innerHTML = html;
+	document.getElementById('hangmandiv').innerHTML = html;
 }
 
 function createHiddenLetters() {
 	var i = 0;
+	var html = '';
 	for(i = 0; i < word.length; i++) {
-		//do nothing for now
+		html += "<p id='letter" + i + "' class='" + word.charAt(i) + "'>" + word.charAt(i) + "</p>";
 	}
-	var answer = document.getElementById('answer');
-	answer.innerHTML = word;
+	var answerdiv = document.getElementById('answerdiv');
+	answerdiv.innerHTML = html;
+}
+
+function createUnderlines() {
+	var html = '';
+	var i = 0;
+	for(i = 0; i < word.length; i++) {
+		//draw a black line, small white line, repeat until all letters are represented
+		html += "<svg height='10' width='35'><line x1=0 y1=0 x2=35 y2=0 style='stroke:rgb(0,0,0);stroke-width:2'/></svg>";
+		html += "<svg height='10' width='5'><line x1=0 y1=0 x2=5 y2=0 style='stroke:rgb(255,255,255);stroke-width:2'/></svg>";
+	}
+	document.getElementById('underlines').innerHTML += html;
+}
+
+function processGuess(event) {
+	if(event.keyCode !== 116) { //ignore the refresh button
+		var guess = String.fromCharCode(event.keyCode).toLowerCase();
+		var indexOfGuess = word.indexOf(guess);
+		if(indexOfGuess === -1) {
+			wrongGuesses--;
+			addPieceOfHangman(); //add an element to the hangman	
+		}
+		else {
+			var letter;
+			while(indexOfGuess !== -1) {
+				if(indexOfGuess === 0) { 
+					word = word.substr(1, word.length); //get rid of letter from word
+				}
+				else {
+					word = word.substr(0, indexOfGuess) + word.substr(indexOfGuess+1, word.length); //get rid of letter from word
+				}
+				indexOfGuess = word.indexOf(guess);
+			}
+			var guessedLetters = document.getElementsByClassName(guess);
+			for(i = 0; i < guessedLetters.length; i++) {
+				guessedLetters[i].style.visibility = "visible";
+			}
+		}
+		
+		if(wrongGuesses === 0) {
+			alert("You lose!");	//death animation, prompt to try again
+			document.removeEventListener('keydown', processGuess);
+		}
+		if(word.length === 0) { //this is our win condition
+			alert("You win!"); //victory animation, prompt to play again
+			document.removeEventListener('keydown', processGuess);
+		}
+	}
+}
+
+function addPieceOfHangman() {
+	var hangman = document.getElementById('hangman');
+	switch(wrongGuesses) {
+		case 5: //add head
+			hangman.innerHTML += "<circle cx='119' cy='40' r='10' stroke='black' stroke-width='3' fill='white'/>";
+			break;
+		case 4: //add body
+			hangman.innerHTML += "<line x1='119' y1='50' x2='119' y2='100' style='stroke:rgb(0,0,0);stroke-width:3'/>"; 
+			break;
+		case 3: //add left leg
+			hangman.innerHTML += "<line x1='119' y1='100' x2='99' y2='120' style='stroke:rgb(0,0,0);stroke-width:3'/>";
+			break;
+		case 2: //add right leg
+			hangman.innerHTML += "<line x1='119' y1='100' x2='139' y2='120' style='stroke:rgb(0,0,0);stroke-width:3'/>";
+			break;
+		case 1:	//add left arm
+			hangman.innerHTML += "<line x1='119' y1='70' x2='139' y2='60' style='stroke:rgb(0,0,0);stroke-width:3'/>";
+			break;
+		case 0: //add right arm
+			hangman.innerHTML += "<line x1='119' y1='70' x2='99' y2='60' style='stroke:rgb(0,0,0);stroke-width:3'/>";
+			//add any other death animations (crossed eyes, sad mouth, etc)
+			break;
+	}
 }
